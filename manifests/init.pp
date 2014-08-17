@@ -7,20 +7,15 @@ class ruby(
   $prefix   = $ruby::prefix,
   $user     = $ruby::user,
 ) {
-  if $::osfamily == 'Darwin' {
-    include boxen::config
-  }
-
+  include boxen::config
   include ruby::build
 
   $provider_class = "ruby::${provider}"
   include $provider_class
 
-  if $::osfamily == 'Darwin' {
-    boxen::env_script { 'ruby':
-      content  => template('ruby/ruby.sh'),
-      priority => 'higher',
-    }
+  boxen::env_script { 'ruby':
+    content  => template('ruby/ruby.sh'),
+    priority => 'higher',
   }
 
   file { '/opt/rubies':
