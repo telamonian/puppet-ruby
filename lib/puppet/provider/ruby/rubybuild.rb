@@ -63,7 +63,14 @@ private
   end
 
   def build_ruby
-    execute "#{ruby_build} #{version} #{prefix}", command_options.merge(:failonfail => true)
+    if @resource[:patch].length > 0
+      # there are patches to apply to the build, so apply them
+      patchnam = (@resource[:patch].is_a?(Array) ? @resource[:patch].join(' ') : @resource[:patch])
+      execute "filterdiff #{File.join(cache_path, patchnam)} | #{ruby_build} --patch #{version} #{prefix}", command_options.merge(:failonfail => true)
+      #execute "#{ruby_build} --patch #{version} #{prefix} < #{File.join(cache_path, patchnam)}", command_options.merge(:failonfail => true)
+    else
+      execute "#{ruby_build} #{version} #{prefix}", command_options.merge(:failonfail => true)
+    end  
   end
 
   def tmp

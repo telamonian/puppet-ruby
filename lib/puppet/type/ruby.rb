@@ -66,6 +66,15 @@ Puppet::Type.newtype(:ruby) do
     end
   end
 
+  newparam(:patch) do
+    validate do |value|
+      unless value.is_a?(Array) || value.is_a?(String)
+        raise Puppet::ParseError,
+          "Expected patch to be an array, got #{value.class.name}"
+      end
+    end
+  end
+  
   autorequire :user do
     Array.new.tap do |a|
       if @parameters.include?(:user) && user = @parameters[:user].to_s
